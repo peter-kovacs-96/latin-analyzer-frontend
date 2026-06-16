@@ -122,19 +122,15 @@ export function WordChip({ word }: Props) {
         onMouseEnter={showHover}
         onMouseLeave={hideHover}
         onClick={togglePin}
+        title={warning?.title}
         className={[
-          'relative inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
+          'inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
           isPinned ? 'cursor-pointer ring-2 ring-offset-1 ring-gray-400' : 'cursor-pointer',
+          warning ? 'outline outline-2 outline-slate-400 outline-offset-1' : '',
           colorClasses,
-        ].join(' ')}
+        ].filter(Boolean).join(' ')}
       >
         {word.form}
-        {warning && (
-          <span
-            title={warning.title}
-            className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-slate-500 select-none cursor-help"
-          />
-        )}
       </span>
       <span className="text-xs text-gray-500 leading-snug text-center w-24 mt-0.5 line-clamp-3 h-[3.25rem]">
         {word.meaning}
