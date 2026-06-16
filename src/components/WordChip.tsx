@@ -2,7 +2,6 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { WordAnalysis } from '../types';
 import { WordTooltip } from './WordTooltip';
-import { useDebug } from '../DebugContext';
 
 const ERROR_STATUSES = new Set([
   'timeout', 'network_error', 'http_error', 'rate_limited',
@@ -111,7 +110,6 @@ export function WordChip({ word }: Props) {
     );
   }
 
-  const debug = useDebug();
   const colorClasses = UPOS_CLASSES[word.upos] ?? DEFAULT_CLASSES;
   const isPinned = !!pinnedStyle;
   const tooltipStyle = pinnedStyle ?? hoverStyle;
