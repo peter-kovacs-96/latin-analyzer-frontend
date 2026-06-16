@@ -126,7 +126,7 @@ export function WordChip({ word }: Props) {
         className={[
           'inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
           isPinned ? 'cursor-pointer ring-2 ring-offset-1 ring-gray-400' : 'cursor-pointer',
-          warning ? 'outline outline-2 outline-slate-400 outline-offset-1' : '',
+          warning ? 'outline outline-2 outline-gray-700 outline-offset-1' : '',
           colorClasses,
         ].filter(Boolean).join(' ')}
       >
