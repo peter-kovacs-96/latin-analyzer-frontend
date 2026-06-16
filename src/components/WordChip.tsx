@@ -117,7 +117,7 @@ export function WordChip({ word }: Props) {
 
   return (
     <span className="inline-flex flex-col items-center gap-0.5">
-      <span className="relative">
+      <span className="relative inline-block">
         <span
           ref={chipRef}
           onMouseEnter={showHover}
@@ -134,7 +134,7 @@ export function WordChip({ word }: Props) {
         {warning && (
           <span
             title={warning.title}
-            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-slate-500 select-none cursor-help"
+            className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-slate-500 select-none cursor-help"
           />
         )}
       </span>
