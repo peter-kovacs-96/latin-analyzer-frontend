@@ -174,6 +174,14 @@ export default function App() {
                   ? `${sentences.length} sentence${sentences.length !== 1 ? 's' : ''}`
                   : 'No results yet'}
               </span>
+              <span className="ml-auto text-xs text-gray-300 flex items-center gap-2">
+                <span>powered by</span>
+                <a href="https://lindat.mff.cuni.cz/services/udpipe/info.php" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors" title="Institute of Formal and Applied Linguistics, Faculty of Mathematics and Physics, Charles University, Czech Republic">UDPipe</a>
+                <span>·</span>
+                <a href="https://latinwordnet.exeter.ac.uk" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors">Latin WordNet</a>
+                <span>·</span>
+                <a href="https://www.latin-is-simple.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors">Latin is Simple</a>
+              </span>
             </div>
 
             {/* Results */}
