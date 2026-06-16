@@ -123,12 +123,12 @@ export function WordChip({ word }: Props) {
         onMouseLeave={hideHover}
         onClick={togglePin}
         title={warning?.title}
+        style={warning ? { outline: '2px solid #374151', outlineOffset: '2px' } : undefined}
         className={[
           'inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
           isPinned ? 'cursor-pointer ring-2 ring-offset-1 ring-gray-400' : 'cursor-pointer',
-          warning ? 'outline outline-2 outline-gray-700 outline-offset-1' : '',
           colorClasses,
-        ].filter(Boolean).join(' ')}
+        ].join(' ')}
       >
         {word.form}
       </span>
