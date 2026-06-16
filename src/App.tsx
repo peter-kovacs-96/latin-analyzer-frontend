@@ -41,6 +41,23 @@ export default function App() {
     }
   }, [isStreaming]);
 
+  // Keep backend warm: ping /health every 10 minutes when tab is visible
+  useEffect(() => {
+    const backendUrl = (import.meta.env.VITE_BACKEND_URL as string | undefined) ?? 'http://localhost:8000';
+    const ping = () => {
+      if (document.visibilityState === 'visible') {
+        fetch(`${backendUrl}/health`, { method: 'GET' }).catch(() => {});
+      }
+    };
+    ping(); // immediate ping on mount
+    const id = setInterval(ping, 10 * 60 * 1000);
+    document.addEventListener('visibilitychange', ping);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', ping);
+    };
+  }, []);
+
   const analyze = useCallback(
     async (fileName: string, text: string) => {
       setSentences([]);
