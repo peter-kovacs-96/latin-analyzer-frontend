@@ -117,20 +117,18 @@ export function WordChip({ word }: Props) {
 
   return (
     <span className="inline-flex flex-col items-center gap-0.5">
-      <span className="relative inline-block">
-        <span
-          ref={chipRef}
-          onMouseEnter={showHover}
-          onMouseLeave={hideHover}
-          onClick={togglePin}
-          className={[
-            'inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
-            isPinned ? 'cursor-pointer ring-2 ring-offset-1 ring-gray-400' : 'cursor-pointer',
-            colorClasses,
-          ].join(' ')}
-        >
-          {word.form}
-        </span>
+      <span
+        ref={chipRef}
+        onMouseEnter={showHover}
+        onMouseLeave={hideHover}
+        onClick={togglePin}
+        className={[
+          'relative inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
+          isPinned ? 'cursor-pointer ring-2 ring-offset-1 ring-gray-400' : 'cursor-pointer',
+          colorClasses,
+        ].join(' ')}
+      >
+        {word.form}
         {warning && (
           <span
             title={warning.title}
