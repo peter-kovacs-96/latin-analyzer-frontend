@@ -178,8 +178,7 @@ export default function App() {
           <div className="h-full flex flex-col">
             {/* Top bar */}
             <div className="flex items-center h-12 px-4 border-b border-gray-200 bg-white">
-              <div className="w-10" /> {/* space for toggle button */}
-              <span className="text-xs text-gray-400 ml-2">
+              <span className="text-xs text-gray-400">
                 {isStreaming
                   ? 'Streaming…'
                   : sentences.length > 0
@@ -194,7 +193,7 @@ export default function App() {
                 <span>·</span>
                 <a href="https://www.latin-is-simple.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors">Latin is Simple</a>
                 <span>·</span>
-                <a href="https://morph.perseids.org" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors">Morpheus</a>
+                <a href="https://www.online-latin-dictionary.com/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors">Morpheus</a>
               </span>
             </div>
 

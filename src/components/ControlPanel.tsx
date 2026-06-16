@@ -101,25 +101,25 @@ export function ControlPanel({
 }: Props) {
   return (
     <>
-      <button
-        onClick={onToggle}
-        className="absolute top-3 left-3 z-30 flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50 transition-colors"
-        title={open ? 'Close panel' : 'Open panel'}
-      >
-        <svg className="w-4 h-4 text-gray-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-            d={open ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
-        </svg>
-      </button>
-
       <aside
         className={[
           'absolute top-0 left-0 z-20 h-full w-64 border-r border-gray-200 bg-white shadow-md flex flex-col transition-transform duration-200',
           open ? 'translate-x-0' : '-translate-x-full',
         ].join(' ')}
       >
-        <div className="flex items-center gap-2 px-4 pt-3 pb-3 border-b border-gray-100">
-          <div className="w-8" />
+        {/* Toggle tab — sticks out from the right edge of the panel */}
+        <button
+          onClick={onToggle}
+          className="absolute top-4 left-full flex h-8 w-6 items-center justify-center rounded-r-md border border-l-0 border-gray-200 bg-white shadow-sm hover:bg-gray-50 transition-colors"
+          title={open ? 'Close panel' : 'Open panel'}
+        >
+          <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d={open ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
+          </svg>
+        </button>
+
+        <div className="flex items-center px-4 pt-3 pb-3 border-b border-gray-100">
           <h1 className="text-sm font-semibold text-gray-800 tracking-tight">Latin Analyzer</h1>
         </div>
 
