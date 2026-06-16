@@ -102,7 +102,7 @@ export function WordChip({ word }: Props) {
   }, [pinnedStyle]);
 
   if (word.upos === 'PUNCT') {
-    return <span className="text-gray-400 select-text mt-1">{word.form}</span>;
+    return <span className="text-gray-400 select-text mb-0.5">{word.form}</span>;
   }
 
   const colorClasses = UPOS_CLASSES[word.upos] ?? DEFAULT_CLASSES;
@@ -111,7 +111,7 @@ export function WordChip({ word }: Props) {
   const warning = getWarning(word);
 
   return (
-    <span className="inline-flex flex-col items-center gap-0.5">
+    <span className="inline-flex flex-col-reverse items-center gap-0.5">
       <span className="relative">
         <span
           ref={chipRef}
@@ -143,7 +143,7 @@ export function WordChip({ word }: Props) {
         )}
       </span>
       {word.meaning ? (
-        <span className="text-xs text-gray-500 leading-snug text-center max-w-28 mt-0.5 line-clamp-3">
+        <span className="text-xs text-gray-500 leading-snug text-center max-w-28 mb-0.5 line-clamp-3">
           {word.meaning}
         </span>
       ) : (

@@ -27,6 +27,7 @@ const SVC_SHORT: Record<string, string> = {
   udpipe:           'UDPipe',
   latin_wordnet:    'WordNet',
   latin_is_simple:  'LIS',
+  morpheus:         'Morpheus',
 };
 
 const STATUS_STYLE: Record<string, string> = {

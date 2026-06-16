@@ -12,7 +12,7 @@ export function SentenceBlock({ sentence }: Props) {
         #{sentence.sentence_number}
       </div>
       {sentence.lines.map((line, li) => (
-        <div key={line.line_number ?? li} className="flex flex-wrap items-start gap-x-2 gap-y-4 mb-3">
+        <div key={line.line_number ?? li} className="flex flex-wrap items-end gap-x-2 gap-y-4 mb-3">
           {line.words.map((word, wi) => (
             <WordChip key={wi} word={word} />
           ))}

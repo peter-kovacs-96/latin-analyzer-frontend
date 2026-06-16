@@ -181,6 +181,8 @@ export default function App() {
                 <a href="https://latinwordnet.exeter.ac.uk" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors">Latin WordNet</a>
                 <span>·</span>
                 <a href="https://www.latin-is-simple.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors">Latin is Simple</a>
+                <span>·</span>
+                <a href="https://morph.perseids.org" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors">Morpheus</a>
               </span>
             </div>
 
