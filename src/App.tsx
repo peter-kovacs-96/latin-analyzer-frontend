@@ -177,7 +177,7 @@ export default function App() {
         <div className="h-full pt-0">
           <div className="h-full flex flex-col">
             {/* Top bar */}
-            <div className="flex items-center h-12 px-4 border-b border-gray-200 bg-white">
+            <div className="flex items-center h-12 px-12 border-b border-gray-200 bg-white">
               <span className="text-xs text-gray-400">
                 {isStreaming
                   ? 'Streaming…'
