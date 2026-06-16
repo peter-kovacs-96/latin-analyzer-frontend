@@ -141,6 +141,12 @@ export default function App() {
     analyze(file.name, file.content);
   }
 
+  function handleRecentRemove(file: RecentFile) {
+    const updated = recentFiles.filter(f => f.timestamp !== file.timestamp);
+    setRecentFiles(updated);
+    try { localStorage.setItem(RECENT_KEY, JSON.stringify(updated)); } catch {}
+  }
+
   return (
     <DebugContext.Provider value={debugMode}>
     <div className="relative h-screen w-screen overflow-hidden bg-gray-50 flex">
@@ -154,6 +160,7 @@ export default function App() {
         recentFiles={recentFiles}
         onFile={handleFile}
         onRecentSelect={handleRecentSelect}
+        onRecentRemove={handleRecentRemove}
         isStreaming={isStreaming}
         debugMode={debugMode}
         onDebugModeChange={setDebugMode}

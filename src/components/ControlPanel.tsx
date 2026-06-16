@@ -13,6 +13,7 @@ interface Props {
   recentFiles: RecentFile[];
   onFile: (name: string, content: string) => void;
   onRecentSelect: (f: RecentFile) => void;
+  onRecentRemove: (f: RecentFile) => void;
   isStreaming: boolean;
   debugMode: boolean;
   onDebugModeChange: (v: boolean) => void;
@@ -93,6 +94,7 @@ export function ControlPanel({
   recentFiles,
   onFile,
   onRecentSelect,
+  onRecentRemove,
   isStreaming,
   debugMode,
   onDebugModeChange,
@@ -150,6 +152,7 @@ export function ControlPanel({
           <RecentFiles
             files={recentFiles}
             onSelect={onRecentSelect}
+            onRemove={onRecentRemove}
             disabled={isStreaming}
           />
         </div>
