@@ -115,7 +115,7 @@ export function WordChip({ word }: Props) {
   const colorClasses = UPOS_CLASSES[word.upos] ?? DEFAULT_CLASSES;
   const isPinned = !!pinnedStyle;
   const tooltipStyle = pinnedStyle ?? hoverStyle;
-  const warning = debug ? getWarning(word) : null;
+  const warning = getWarning(word);
 
   return (
     <span className="inline-flex flex-col items-center gap-0.5">
