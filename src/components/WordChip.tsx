@@ -93,11 +93,11 @@ export function WordChip({ word }: Props) {
         {word.form}
       </span>
       {word.meaning ? (
-        <span className="text-[10px] text-gray-400 leading-tight text-center max-w-20 line-clamp-2">
+        <span className="text-xs text-gray-500 leading-snug text-center max-w-28 mt-0.5 line-clamp-3">
           {word.meaning}
         </span>
       ) : (
-        <span className="text-[10px] invisible select-none">·</span>
+        <span className="text-xs invisible select-none">·</span>
       )}
       {tooltipStyle && createPortal(
         <WordTooltip word={word} style={tooltipStyle} pinned={isPinned} onClose={() => setPinnedStyle(null)} />,
