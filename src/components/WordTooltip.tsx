@@ -47,9 +47,9 @@ export function WordTooltip({ word, style, pinned, onClose }: Props) {
             )}
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            {word.lemma && (
+            {word.lis_url && (
               <a
-                href={`https://www.latin-is-simple.com/en/vocabulary/search/?query=${encodeURIComponent(word.lemma)}`}
+                href={word.lis_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={e => e.stopPropagation()}

@@ -21,6 +21,7 @@ export interface WordAnalysis {
   syntactic_role: string | null;
   confidence: WordConfidence;
   source: string;
+  lis_url: string;
 }
 
 export interface AnalysisSummary {
