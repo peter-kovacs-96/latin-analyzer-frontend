@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { WordAnalysis } from '../types';
 import { WordTooltip } from './WordTooltip';
@@ -26,38 +26,65 @@ const UPOS_CLASSES: Record<string, string> = {
 
 const DEFAULT_CLASSES = 'bg-gray-50 text-gray-600 border border-gray-100 hover:bg-gray-100';
 
-const TOOLTIP_WIDTH = 256; // w-64
+const TOOLTIP_WIDTH = 256;
 const TOOLTIP_GAP = 8;
 
+function calcStyle(el: HTMLElement): React.CSSProperties {
+  const rect = el.getBoundingClientRect();
+  const top = rect.top - TOOLTIP_GAP;
+  let left = rect.left + rect.width / 2 - TOOLTIP_WIDTH / 2;
+  left = Math.max(8, Math.min(left, window.innerWidth - TOOLTIP_WIDTH - 8));
+  return { top, left, transform: 'translateY(-100%)' };
+}
+
 export function WordChip({ word }: Props) {
-  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties | null>(null);
+  const [hoverStyle, setHoverStyle] = useState<React.CSSProperties | null>(null);
+  const [pinnedStyle, setPinnedStyle] = useState<React.CSSProperties | null>(null);
   const chipRef = useRef<HTMLSpanElement>(null);
 
-  const showTooltip = useCallback(() => {
-    if (!chipRef.current) return;
-    const rect = chipRef.current.getBoundingClientRect();
-    const top = rect.top - TOOLTIP_GAP;
-    // center horizontally, clamp to viewport
-    let left = rect.left + rect.width / 2 - TOOLTIP_WIDTH / 2;
-    left = Math.max(8, Math.min(left, window.innerWidth - TOOLTIP_WIDTH - 8));
-    setTooltipStyle({ top, left, transform: 'translateY(-100%)' });
-  }, []);
+  const showHover = useCallback(() => {
+    if (!pinnedStyle && chipRef.current) setHoverStyle(calcStyle(chipRef.current));
+  }, [pinnedStyle]);
 
-  const hideTooltip = useCallback(() => setTooltipStyle(null), []);
+  const hideHover = useCallback(() => setHoverStyle(null), []);
+
+  const togglePin = useCallback(() => {
+    if (pinnedStyle) {
+      setPinnedStyle(null);
+    } else if (chipRef.current) {
+      setPinnedStyle(calcStyle(chipRef.current));
+      setHoverStyle(null);
+    }
+  }, [pinnedStyle]);
+
+  // Close pinned tooltip on Escape
+  useEffect(() => {
+    if (!pinnedStyle) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setPinnedStyle(null); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [pinnedStyle]);
 
   if (word.upos === 'PUNCT') {
-    return <span className="text-gray-400 select-text self-start mt-1">{word.form}</span>;
+    return <span className="text-gray-400 select-text mt-1">{word.form}</span>;
   }
 
   const colorClasses = UPOS_CLASSES[word.upos] ?? DEFAULT_CLASSES;
+  const isPinned = !!pinnedStyle;
+  const tooltipStyle = pinnedStyle ?? hoverStyle;
 
   return (
     <span className="inline-flex flex-col items-center gap-0.5">
       <span
         ref={chipRef}
-        onMouseEnter={showTooltip}
-        onMouseLeave={hideTooltip}
-        className={`inline-block px-1.5 py-0.5 rounded text-sm font-medium cursor-default select-text transition-colors ${colorClasses}`}
+        onMouseEnter={showHover}
+        onMouseLeave={hideHover}
+        onClick={togglePin}
+        className={[
+          'inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
+          isPinned ? 'cursor-pointer ring-2 ring-offset-1 ring-gray-400' : 'cursor-pointer',
+          colorClasses,
+        ].join(' ')}
       >
         {word.form}
       </span>
@@ -69,7 +96,7 @@ export function WordChip({ word }: Props) {
         <span className="text-[10px] invisible select-none">·</span>
       )}
       {tooltipStyle && createPortal(
-        <WordTooltip word={word} style={tooltipStyle} />,
+        <WordTooltip word={word} style={tooltipStyle} pinned={isPinned} onClose={() => setPinnedStyle(null)} />,
         document.body
       )}
     </span>

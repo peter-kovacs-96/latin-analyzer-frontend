@@ -3,6 +3,8 @@ import type { WordAnalysis, WordConfidence, Morphology } from '../types';
 interface Props {
   word: WordAnalysis;
   style?: React.CSSProperties;
+  pinned?: boolean;
+  onClose?: () => void;
 }
 
 const MORPH_KEYS: (keyof Morphology)[] = [
@@ -21,23 +23,37 @@ const CONFIDENCE_LABELS: Record<WordConfidence, string> = {
   form_only:  'form only',
 };
 
-export function WordTooltip({ word, style }: Props) {
+export function WordTooltip({ word, style, pinned, onClose }: Props) {
   const morph = word.morphology ?? {};
   const morphRows = MORPH_KEYS.filter(k => morph[k]);
 
   return (
     <div
       style={style}
-      className="fixed z-50 w-64 rounded-lg border border-gray-200 bg-white shadow-lg text-xs pointer-events-none"
+      className="fixed z-50 w-64 rounded-lg border border-gray-200 bg-white shadow-lg text-xs"
+      // stop click inside tooltip from bubbling to document (which might close it)
+      onClick={e => e.stopPropagation()}
     >
       <div className="p-3 space-y-2">
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="font-semibold text-sm text-gray-900">{word.form}</span>
-          {word.lemma && word.lemma !== word.form && (
-            <span className="text-gray-500 italic">{word.lemma}</span>
-          )}
-          {word.dictionary_form && (
-            <span className="text-gray-400 text-[10px]">{word.dictionary_form}</span>
+        {/* Header row: form + close button if pinned */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="font-semibold text-sm text-gray-900">{word.form}</span>
+            {word.lemma && word.lemma !== word.form && (
+              <span className="text-gray-500 italic">{word.lemma}</span>
+            )}
+            {word.dictionary_form && (
+              <span className="text-gray-400 text-[10px]">{word.dictionary_form}</span>
+            )}
+          </div>
+          {pinned && onClose && (
+            <button
+              onClick={onClose}
+              className="shrink-0 flex items-center justify-center w-4 h-4 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Close"
+            >
+              ×
+            </button>
           )}
         </div>
 
