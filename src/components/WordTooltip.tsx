@@ -2,6 +2,7 @@ import type { WordAnalysis, WordConfidence, Morphology } from '../types';
 
 interface Props {
   word: WordAnalysis;
+  style?: React.CSSProperties;
 }
 
 const MORPH_KEYS: (keyof Morphology)[] = [
@@ -20,15 +21,15 @@ const CONFIDENCE_LABELS: Record<WordConfidence, string> = {
   form_only:  'form only',
 };
 
-export function WordTooltip({ word }: Props) {
+export function WordTooltip({ word, style }: Props) {
   const morph = word.morphology ?? {};
   const morphRows = MORPH_KEYS.filter(k => morph[k]);
 
   return (
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 rounded-lg border border-gray-200 bg-white shadow-lg text-xs pointer-events-none">
-      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-200" />
-      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-[-1px] border-4 border-transparent border-t-white" />
-
+    <div
+      style={style}
+      className="fixed z-50 w-64 rounded-lg border border-gray-200 bg-white shadow-lg text-xs pointer-events-none"
+    >
       <div className="p-3 space-y-2">
         <div className="flex items-baseline gap-2 flex-wrap">
           <span className="font-semibold text-sm text-gray-900">{word.form}</span>
