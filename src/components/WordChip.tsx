@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { WordAnalysis } from '../types';
 import { WordTooltip } from './WordTooltip';
+import { useDebug } from '../DebugContext';
 
 const ERROR_STATUSES = new Set([
   'timeout', 'network_error', 'http_error', 'rate_limited',
@@ -102,16 +103,17 @@ export function WordChip({ word }: Props) {
   }, [pinnedStyle]);
 
   if (word.upos === 'PUNCT') {
-    return <span className="text-gray-400 select-text mb-0.5">{word.form}</span>;
+    return <span className="text-gray-400 select-text mt-1">{word.form}</span>;
   }
 
+  const debug = useDebug();
   const colorClasses = UPOS_CLASSES[word.upos] ?? DEFAULT_CLASSES;
   const isPinned = !!pinnedStyle;
   const tooltipStyle = pinnedStyle ?? hoverStyle;
-  const warning = getWarning(word);
+  const warning = debug ? getWarning(word) : null;
 
   return (
-    <span className="inline-flex flex-col-reverse items-center gap-0.5">
+    <span className="inline-flex flex-col items-center gap-0.5">
       <span className="relative">
         <span
           ref={chipRef}
@@ -142,13 +144,9 @@ export function WordChip({ word }: Props) {
           </span>
         )}
       </span>
-      {word.meaning ? (
-        <span className="text-xs text-gray-500 leading-snug text-center max-w-28 mb-0.5 line-clamp-3">
-          {word.meaning}
-        </span>
-      ) : (
-        <span className="text-xs invisible select-none">·</span>
-      )}
+      <span className="text-xs text-gray-500 leading-snug text-center w-24 mt-0.5 line-clamp-3 h-[3.25rem]">
+        {word.meaning}
+      </span>
       {tooltipStyle && createPortal(
         <WordTooltip word={word} style={tooltipStyle} pinned={isPinned} onClose={() => setPinnedStyle(null)} />,
         document.body

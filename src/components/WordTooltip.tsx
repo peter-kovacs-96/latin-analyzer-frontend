@@ -1,4 +1,5 @@
 import type { WordAnalysis, WordConfidence, Morphology, DownstreamDiagnostic } from '../types';
+import { useDebug } from '../DebugContext';
 
 interface Props {
   word: WordAnalysis;
@@ -51,6 +52,7 @@ function DiagRow({ svc, diag }: { svc: string; diag: DownstreamDiagnostic }) {
 }
 
 export function WordTooltip({ word, style, pinned, onClose }: Props) {
+  const debug = useDebug();
   const morph = word.morphology ?? {};
   const morphRows = MORPH_KEYS.filter(k => morph[k]);
 
@@ -127,7 +129,7 @@ export function WordTooltip({ word, style, pinned, onClose }: Props) {
           </span>
         </div>
 
-        {word.downstreams && Object.keys(word.downstreams).length > 0 && (
+        {debug && word.downstreams && Object.keys(word.downstreams).length > 0 && (
           <table className="w-full border-t border-gray-100 pt-2">
             <tbody>
               {Object.entries(word.downstreams).map(([svc, diag]) => (

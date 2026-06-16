@@ -14,6 +14,8 @@ interface Props {
   onFile: (name: string, content: string) => void;
   onRecentSelect: (f: RecentFile) => void;
   isStreaming: boolean;
+  debugMode: boolean;
+  onDebugModeChange: (v: boolean) => void;
 }
 
 function InfoTooltip({ text }: { text: string }) {
@@ -92,6 +94,8 @@ export function ControlPanel({
   onFile,
   onRecentSelect,
   isStreaming,
+  debugMode,
+  onDebugModeChange,
 }: Props) {
   return (
     <>
@@ -151,9 +155,22 @@ export function ControlPanel({
         </div>
 
         <div className="px-4 py-3 border-t border-gray-100">
-          <p className="text-[10px] text-gray-400 text-center">
-            Hover words for morphology
-          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Debug mode</span>
+            <button
+              onClick={() => onDebugModeChange(!debugMode)}
+              className={[
+                'relative inline-flex h-4 w-7 items-center rounded-full transition-colors',
+                debugMode ? 'bg-gray-700' : 'bg-gray-200',
+              ].join(' ')}
+              aria-label="Toggle debug mode"
+            >
+              <span className={[
+                'inline-block h-3 w-3 transform rounded-full bg-white transition-transform',
+                debugMode ? 'translate-x-3.5' : 'translate-x-0.5',
+              ].join(' ')} />
+            </button>
+          </div>
         </div>
       </aside>
 

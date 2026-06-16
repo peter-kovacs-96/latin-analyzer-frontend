@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import type { SentenceChunk, StreamChunk, RecentFile, Lang, Mode } from './types';
 import { ControlPanel } from './components/ControlPanel';
 import { ResultsView } from './components/ResultsView';
+import { DebugContext } from './DebugContext';
 
 const RECENT_KEY = 'latin_recent_files';
 const MAX_RECENT = 5;
@@ -33,6 +34,7 @@ export default function App() {
   const [panelOpen, setPanelOpen] = useState(true);
   const [currentFileName, setCurrentFileName] = useState('');
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>(() => loadRecentFiles());
+  const [debugMode, setDebugMode] = useState(false);
 
   // Close panel on narrow screens once analysis starts
   useEffect(() => {
@@ -140,6 +142,7 @@ export default function App() {
   }
 
   return (
+    <DebugContext.Provider value={debugMode}>
     <div className="relative h-screen w-screen overflow-hidden bg-gray-50 flex">
       <ControlPanel
         open={panelOpen}
@@ -152,6 +155,8 @@ export default function App() {
         onFile={handleFile}
         onRecentSelect={handleRecentSelect}
         isStreaming={isStreaming}
+        debugMode={debugMode}
+        onDebugModeChange={setDebugMode}
       />
 
       {/* Main content area — shifts right when panel open (sm+) */}
@@ -198,5 +203,6 @@ export default function App() {
         </div>
       </main>
     </div>
+    </DebugContext.Provider>
   );
 }
