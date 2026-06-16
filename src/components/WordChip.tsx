@@ -27,14 +27,18 @@ const UPOS_CLASSES: Record<string, string> = {
 const DEFAULT_CLASSES = 'bg-gray-50 text-gray-600 border border-gray-100 hover:bg-gray-100';
 
 const TOOLTIP_WIDTH = 256;
+const TOOLTIP_ESTIMATED_HEIGHT = 260;
 const TOOLTIP_GAP = 8;
 
 function calcStyle(el: HTMLElement): React.CSSProperties {
   const rect = el.getBoundingClientRect();
-  const top = rect.top - TOOLTIP_GAP;
   let left = rect.left + rect.width / 2 - TOOLTIP_WIDTH / 2;
   left = Math.max(8, Math.min(left, window.innerWidth - TOOLTIP_WIDTH - 8));
-  return { top, left, transform: 'translateY(-100%)' };
+  const spaceAbove = rect.top - TOOLTIP_GAP;
+  if (spaceAbove >= TOOLTIP_ESTIMATED_HEIGHT) {
+    return { top: rect.top - TOOLTIP_GAP, left, transform: 'translateY(-100%)' };
+  }
+  return { top: rect.bottom + TOOLTIP_GAP, left };
 }
 
 export function WordChip({ word }: Props) {
