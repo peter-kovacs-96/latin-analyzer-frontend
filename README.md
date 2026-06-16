@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# Latin Analyzer — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript frontend that streams Latin morphological analysis from the backend and renders results word-by-word in real time.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Input
+- File upload (`.txt` and `.docx`) or drag-and-drop
+- `.docx` files are converted client-side using [mammoth.js](https://github.com/mwilliamson/mammoth.js) — no file is ever sent to a server
+- Recent files panel: stores the last 5 uploaded files in `localStorage` and allows re-running any of them without re-uploading
 
-## React Compiler
+### Streaming
+- Consumes NDJSON from the backend via `fetch` + `ReadableStream`
+- Results render sentence-by-sentence as they arrive, without waiting for the full response
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Display
+- Color-coded word chips by UPOS tag:
 
-## Expanding the ESLint configuration
+  | UPOS | Color |
+  |---|---|
+  | NOUN | blue |
+  | VERB | red |
+  | ADJ | green |
+  | ADV | orange |
+  | PRON | purple |
+  | PREP / CONJ / PART | gray |
+  | PUNCT | no chip |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Interlinear meaning displayed below each word chip
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Tooltip
+- Hover over any word chip to see full detail
+- Click to pin the tooltip open; close with the X button or Escape
+- Shows: surface form, lemma, dictionary form (principal parts), meaning, full morphology table, syntactic role, confidence badge, and a link to the Latin is Simple entry
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Controls (collapsible left panel)
+- Language toggle: `hu` / `en`
+- Mode toggle: `sentence` / `stanza`
+- File upload and recent files list
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Other
+- "Powered by" bar: UDPipe (with full institution name on hover), Latin WordNet, Latin is Simple
+- Keepalive ping to `/health` every 10 minutes to prevent the Render free-tier backend from sleeping
+
+## Configuration
+
+| Variable | Description | Default |
+|---|---|---|
+| `VITE_BACKEND_URL` | URL of the backend service | `http://localhost:8000` |
+
+Set in `.env.local` for local development.
+
+## Local development
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- React + TypeScript
+- Vite
+- Tailwind CSS v4
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Deployment
+
+Hosted on **Render** (Static Site, free tier).
+GitHub Actions triggers a deploy on every push to `main`.
