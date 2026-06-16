@@ -47,7 +47,7 @@ export function ResultsView({ sentences, isStreaming, fileName }: Props) {
   }
 
   return (
-    <div className="h-full overflow-y-auto px-6 py-4">
+    <div className="h-full overflow-y-auto px-12 py-4">
       {/* Header row */}
       {(sentences.length > 0 || isStreaming) && (
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
