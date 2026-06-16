@@ -105,7 +105,7 @@ export function WordChip({ word }: Props) {
   if (word.upos === 'PUNCT') {
     return (
       <span className="inline-flex flex-col items-center gap-0.5 -ml-1.5">
-        <span className="text-gray-300 select-text text-sm py-0.5">{word.form}</span>
+        <span className="text-gray-800 font-bold select-text text-sm py-0.5">{word.form}</span>
         <span className="h-[3.25rem] block" />
       </span>
     );
