@@ -35,7 +35,7 @@ export function WordTooltip({ word, style, pinned, onClose }: Props) {
       onClick={e => e.stopPropagation()}
     >
       <div className="p-3 space-y-2">
-        {/* Header row: form + close button if pinned */}
+        {/* Header row: form + LIS link + close button */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-baseline gap-2 flex-wrap">
             <span className="font-semibold text-sm text-gray-900">{word.form}</span>
@@ -46,15 +46,32 @@ export function WordTooltip({ word, style, pinned, onClose }: Props) {
               <span className="text-gray-400 text-[10px]">{word.dictionary_form}</span>
             )}
           </div>
-          {pinned && onClose && (
-            <button
-              onClick={onClose}
-              className="shrink-0 flex items-center justify-center w-4 h-4 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Close"
-            >
-              ×
-            </button>
-          )}
+          <div className="flex items-center gap-1 shrink-0">
+            {word.lemma && (
+              <a
+                href={`https://www.latin-is-simple.com/en/vocabulary/search/?query=${encodeURIComponent(word.lemma)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="flex items-center justify-center w-5 h-5 rounded hover:bg-gray-100 text-gray-300 hover:text-blue-500 transition-colors"
+                title="Open in Latin is Simple"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+            {pinned && onClose && (
+              <button
+                onClick={onClose}
+                className="flex items-center justify-center w-5 h-5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            )}
+          </div>
         </div>
 
         {word.meaning && (
