@@ -136,17 +136,8 @@ export function WordChip({ word }: Props) {
         {warning && (
           <span
             title={warning.title}
-            className={[
-              'absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full',
-              'flex items-center justify-center text-[9px] font-bold leading-none',
-              'select-none cursor-help',
-              warning.level === 'error'
-                ? 'bg-red-500 text-white'
-                : 'bg-amber-400 text-white',
-            ].join(' ')}
-          >
-            !
-          </span>
+            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-slate-500 select-none cursor-help"
+          />
         )}
       </span>
       <span className="text-xs text-gray-500 leading-snug text-center w-24 mt-0.5 line-clamp-3 h-[3.25rem]">
