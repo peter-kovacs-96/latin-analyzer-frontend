@@ -1,4 +1,4 @@
-import type { WordAnalysis, WordConfidence, Morphology } from '../types';
+import type { WordAnalysis, WordConfidence, Morphology, DownstreamDiagnostic } from '../types';
 
 interface Props {
   word: WordAnalysis;
@@ -22,6 +22,32 @@ const CONFIDENCE_LABELS: Record<WordConfidence, string> = {
   no_meaning: 'no meaning',
   form_only:  'form only',
 };
+
+const SVC_SHORT: Record<string, string> = {
+  udpipe:           'UDPipe',
+  latin_wordnet:    'WordNet',
+  latin_is_simple:  'LIS',
+};
+
+const STATUS_STYLE: Record<string, string> = {
+  ok:               'text-green-600',
+  not_found:        'text-gray-400',
+  skipped:          'text-gray-300',
+};
+
+function DiagRow({ svc, diag }: { svc: string; diag: DownstreamDiagnostic }) {
+  const label = SVC_SHORT[svc] ?? svc;
+  const isError = !['ok', 'not_found', 'skipped'].includes(diag.status);
+  const cls = isError ? 'text-red-500 font-medium' : (STATUS_STYLE[diag.status] ?? 'text-gray-500');
+  const detail = diag.cached ? 'cached' : diag.latency_ms != null ? `${diag.latency_ms}ms` : '';
+  return (
+    <tr>
+      <td className="text-gray-400 pr-2 py-0.5 w-16">{label}</td>
+      <td className={`py-0.5 ${cls}`}>{diag.status}</td>
+      {detail && <td className="text-gray-300 pl-2 py-0.5">{detail}</td>}
+    </tr>
+  );
+}
 
 export function WordTooltip({ word, style, pinned, onClose }: Props) {
   const morph = word.morphology ?? {};
@@ -99,6 +125,16 @@ export function WordTooltip({ word, style, pinned, onClose }: Props) {
             {CONFIDENCE_LABELS[word.confidence]}
           </span>
         </div>
+
+        {word.downstreams && Object.keys(word.downstreams).length > 0 && (
+          <table className="w-full border-t border-gray-100 pt-2">
+            <tbody>
+              {Object.entries(word.downstreams).map(([svc, diag]) => (
+                <DiagRow key={svc} svc={svc} diag={diag} />
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

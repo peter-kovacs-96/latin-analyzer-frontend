@@ -11,6 +11,14 @@ export interface Morphology {
 
 export type WordConfidence = 'full' | 'no_meaning' | 'form_only';
 
+export interface DownstreamDiagnostic {
+  status: string;
+  reason?: string | null;
+  message?: string | null;
+  cached?: boolean;
+  latency_ms?: number | null;
+}
+
 export interface WordAnalysis {
   form: string;
   lemma: string | null;
@@ -22,6 +30,7 @@ export interface WordAnalysis {
   confidence: WordConfidence;
   source: string;
   lis_url: string;
+  downstreams?: Record<string, DownstreamDiagnostic>;
 }
 
 export interface AnalysisSummary {

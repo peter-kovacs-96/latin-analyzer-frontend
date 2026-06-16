@@ -3,6 +3,38 @@ import { createPortal } from 'react-dom';
 import type { WordAnalysis } from '../types';
 import { WordTooltip } from './WordTooltip';
 
+const ERROR_STATUSES = new Set([
+  'timeout', 'network_error', 'http_error', 'rate_limited',
+  'invalid_response', 'unavailable', 'unknown_error',
+]);
+
+interface Warning {
+  level: 'error' | 'warn';
+  title: string;
+}
+
+function getWarning(word: WordAnalysis): Warning | null {
+  if (word.confidence === 'full') return null;
+
+  const ds = word.downstreams ?? {};
+  const failedSvcs = Object.entries(ds)
+    .filter(([, d]) => ERROR_STATUSES.has(d.status))
+    .map(([svc]) => svc);
+
+  if (word.confidence === 'form_only') {
+    if (failedSvcs.length > 0) {
+      return { level: 'error', title: `Service error (${failedSvcs.join(', ')}) — morphology unconfirmed` };
+    }
+    return { level: 'warn', title: 'Word not found in any dictionary' };
+  }
+
+  if (word.confidence === 'no_meaning') {
+    return { level: 'warn', title: 'No translation found (Latin is Simple)' };
+  }
+
+  return null;
+}
+
 interface Props {
   word: WordAnalysis;
 }
@@ -76,21 +108,39 @@ export function WordChip({ word }: Props) {
   const colorClasses = UPOS_CLASSES[word.upos] ?? DEFAULT_CLASSES;
   const isPinned = !!pinnedStyle;
   const tooltipStyle = pinnedStyle ?? hoverStyle;
+  const warning = getWarning(word);
 
   return (
     <span className="inline-flex flex-col items-center gap-0.5">
-      <span
-        ref={chipRef}
-        onMouseEnter={showHover}
-        onMouseLeave={hideHover}
-        onClick={togglePin}
-        className={[
-          'inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
-          isPinned ? 'cursor-pointer ring-2 ring-offset-1 ring-gray-400' : 'cursor-pointer',
-          colorClasses,
-        ].join(' ')}
-      >
-        {word.form}
+      <span className="relative">
+        <span
+          ref={chipRef}
+          onMouseEnter={showHover}
+          onMouseLeave={hideHover}
+          onClick={togglePin}
+          className={[
+            'inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
+            isPinned ? 'cursor-pointer ring-2 ring-offset-1 ring-gray-400' : 'cursor-pointer',
+            colorClasses,
+          ].join(' ')}
+        >
+          {word.form}
+        </span>
+        {warning && (
+          <span
+            title={warning.title}
+            className={[
+              'absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full',
+              'flex items-center justify-center text-[9px] font-bold leading-none',
+              'select-none cursor-help',
+              warning.level === 'error'
+                ? 'bg-red-500 text-white'
+                : 'bg-amber-400 text-white',
+            ].join(' ')}
+          >
+            !
+          </span>
+        )}
       </span>
       {word.meaning ? (
         <span className="text-xs text-gray-500 leading-snug text-center max-w-28 mt-0.5 line-clamp-3">
