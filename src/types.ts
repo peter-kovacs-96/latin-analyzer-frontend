@@ -1,35 +1,40 @@
-export interface WordFeats {
-  Case?: string;
-  Number?: string;
-  Gender?: string;
-  Person?: string;
-  Tense?: string;
-  Mood?: string;
-  Voice?: string;
-  Degree?: string;
-  VerbForm?: string;
-  [key: string]: string | undefined;
+export interface Morphology {
+  pos?: string | null;
+  case?: string | null;
+  number?: string | null;
+  gender?: string | null;
+  person?: string | null;
+  tense?: string | null;
+  mood?: string | null;
+  voice?: string | null;
 }
 
-export interface WordToken {
-  id: number;
+export type WordConfidence = 'full' | 'no_meaning' | 'form_only';
+
+export interface WordAnalysis {
   form: string;
-  lemma: string;
+  lemma: string | null;
   upos: string;
-  xpos?: string;
-  dictionary_form?: string;
-  meaning?: string;
-  feats?: WordFeats;
-  syntactic_role?: string;
-  confidence?: number;
-  head?: number;
-  deprel?: string;
+  dictionary_form: string;
+  meaning: string;
+  morphology: Morphology;
+  syntactic_role: string | null;
+  confidence: WordConfidence;
+  source: string;
+}
+
+export interface AnalysisSummary {
+  used_udpipe: boolean;
+  word_count: number;
+  partial_failure: boolean;
 }
 
 export interface LineData {
   line_number: number;
-  tokens: WordToken[];
-  text?: string;
+  text: string;
+  request_id: string;
+  summary: AnalysisSummary;
+  words: WordAnalysis[];
 }
 
 export interface SentenceChunk {

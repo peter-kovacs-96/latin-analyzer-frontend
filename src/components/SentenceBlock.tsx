@@ -14,15 +14,15 @@ export function SentenceBlock({ sentence }: Props) {
       <div className="leading-loose">
         {sentence.lines.map((line, li) => (
           <span key={line.line_number ?? li}>
-            {line.tokens.map((token, ti) => {
+            {line.words.map((word, wi) => {
               const needsSpace =
-                ti > 0 &&
-                token.upos !== 'PUNCT' &&
-                ![')', ']', '}'].includes(token.form);
+                wi > 0 &&
+                word.upos !== 'PUNCT' &&
+                ![')', ']', '}'].includes(word.form);
               return (
-                <span key={token.id ?? ti}>
+                <span key={wi}>
                   {needsSpace && ' '}
-                  <WordChip word={token} />
+                  <WordChip word={word} />
                 </span>
               );
             })}
