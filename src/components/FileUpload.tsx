@@ -6,6 +6,19 @@ interface Props {
   disabled: boolean;
 }
 
+// mammoth separates every paragraph with a blank line ("\n\n"). In a poem each
+// verse line is its own paragraph, so this would make the backend treat every
+// line as a separate sentence. Collapse single paragraph breaks to line breaks,
+// keeping a real blank-line gap (an empty paragraph -> 3+ newlines) as one blank
+// line so genuine stanza/section breaks survive.
+function normalizeDocxText(raw: string): string {
+  return raw
+    .split(/\n{3,}/)
+    .map((block) => block.replace(/\n\n/g, "\n").trim())
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 export function FileUpload({ onFile, disabled }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -18,7 +31,7 @@ export function FileUpload({ onFile, disabled }: Props) {
         const mammoth = await import('mammoth');
         const buf = await file.arrayBuffer();
         const result = await mammoth.extractRawText({ arrayBuffer: buf });
-        onFile(file.name, result.value);
+        onFile(file.name, normalizeDocxText(result.value));
       } else {
         const text = await file.text();
         onFile(file.name, text);
