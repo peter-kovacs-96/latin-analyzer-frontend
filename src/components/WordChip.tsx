@@ -123,6 +123,7 @@ export function WordChip({ word }: Props) {
         onMouseLeave={hideHover}
         onClick={togglePin}
         title={warning?.title}
+        data-confidence={word.confidence}
         style={warning ? { outline: '2px solid #374151', outlineOffset: '2px' } : undefined}
         className={[
           'inline-block px-1.5 py-0.5 rounded text-sm font-medium select-text transition-colors',
