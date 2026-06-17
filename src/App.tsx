@@ -3,6 +3,7 @@ import type { SentenceChunk, StreamChunk, RecentFile, Lang, Mode } from './types
 import { ControlPanel } from './components/ControlPanel';
 import { ResultsView } from './components/ResultsView';
 import { DebugContext } from './DebugContext';
+import { LangContext } from './LangContext';
 
 const RECENT_KEY = 'latin_recent_files';
 const MAX_RECENT = 5;
@@ -149,6 +150,7 @@ export default function App() {
 
   return (
     <DebugContext.Provider value={debugMode}>
+    <LangContext.Provider value={lang}>
     <div className="relative h-screen w-screen overflow-hidden bg-gray-50 flex">
       <ControlPanel
         open={panelOpen}
@@ -209,6 +211,7 @@ export default function App() {
         </div>
       </main>
     </div>
+    </LangContext.Provider>
     </DebugContext.Provider>
   );
 }

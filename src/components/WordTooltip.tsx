@@ -1,5 +1,6 @@
-import type { WordAnalysis, WordConfidence, Morphology, DownstreamDiagnostic } from '../types';
+import type { WordAnalysis, WordConfidence, Morphology, DownstreamDiagnostic, Lang } from '../types';
 import { useDebug } from '../DebugContext';
+import { useLang } from '../LangContext';
 
 interface Props {
   word: WordAnalysis;
@@ -18,10 +19,9 @@ const CONFIDENCE_STYLES: Record<WordConfidence, string> = {
   form_only:  'bg-gray-100 text-gray-500',
 };
 
-const CONFIDENCE_LABELS: Record<WordConfidence, string> = {
-  full:       'full',
-  no_meaning: 'no meaning',
-  form_only:  'form only',
+const CONFIDENCE_LABELS: Record<Lang, Record<WordConfidence, string>> = {
+  en: { full: 'full',    no_meaning: 'no meaning',       form_only: 'form only' },
+  hu: { full: 'teljes',  no_meaning: 'hiányzó jelentés', form_only: 'csak alak' },
 };
 
 const SVC_SHORT: Record<string, string> = {
@@ -53,6 +53,7 @@ function DiagRow({ svc, diag }: { svc: string; diag: DownstreamDiagnostic }) {
 
 export function WordTooltip({ word, style, pinned, onClose }: Props) {
   const debug = useDebug();
+  const lang = useLang();
   const morph = word.morphology ?? {};
   const morphRows = MORPH_KEYS.filter(k => morph[k]);
 
@@ -125,7 +126,7 @@ export function WordTooltip({ word, style, pinned, onClose }: Props) {
             <span className="text-gray-600">{word.syntactic_role}</span>
           )}
           <span className={`ml-auto rounded-full px-2 py-0.5 ${CONFIDENCE_STYLES[word.confidence]}`}>
-            {CONFIDENCE_LABELS[word.confidence]}
+            {CONFIDENCE_LABELS[lang][word.confidence]}
           </span>
         </div>
 

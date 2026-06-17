@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { WordAnalysis } from '../types';
+import type { WordAnalysis, Lang } from '../types';
+import { useLang } from '../LangContext';
 import { WordTooltip } from './WordTooltip';
 
 const ERROR_STATUSES = new Set([
@@ -13,7 +14,22 @@ interface Warning {
   title: string;
 }
 
-function getWarning(word: WordAnalysis): Warning | null {
+const WARNING_TEXT = {
+  service_error: {
+    en: (svcs: string) => `Service error (${svcs}) — morphology unconfirmed`,
+    hu: (svcs: string) => `Szolgáltatáshiba (${svcs}) — a morfológia nincs megerősítve`,
+  },
+  not_found: {
+    en: 'Word not found in any dictionary',
+    hu: 'A szó egyik szótárban sem található',
+  },
+  no_meaning: {
+    en: 'No translation found (Latin is Simple)',
+    hu: 'Nincs fordítás (Latin is Simple)',
+  },
+} as const;
+
+function getWarning(word: WordAnalysis, lang: Lang): Warning | null {
   if (word.confidence === 'full') return null;
 
   const ds = word.downstreams ?? {};
@@ -23,13 +39,13 @@ function getWarning(word: WordAnalysis): Warning | null {
 
   if (word.confidence === 'form_only') {
     if (failedSvcs.length > 0) {
-      return { level: 'error', title: `Service error (${failedSvcs.join(', ')}) — morphology unconfirmed` };
+      return { level: 'error', title: WARNING_TEXT.service_error[lang](failedSvcs.join(', ')) };
     }
-    return { level: 'warn', title: 'Word not found in any dictionary' };
+    return { level: 'warn', title: WARNING_TEXT.not_found[lang] };
   }
 
   if (word.confidence === 'no_meaning') {
-    return { level: 'warn', title: 'No translation found (Latin is Simple)' };
+    return { level: 'warn', title: WARNING_TEXT.no_meaning[lang] };
   }
 
   return null;
@@ -74,6 +90,7 @@ function calcStyle(el: HTMLElement): React.CSSProperties {
 }
 
 export function WordChip({ word }: Props) {
+  const lang = useLang();
   const [hoverStyle, setHoverStyle] = useState<React.CSSProperties | null>(null);
   const [pinnedStyle, setPinnedStyle] = useState<React.CSSProperties | null>(null);
   const chipRef = useRef<HTMLSpanElement>(null);
@@ -113,7 +130,7 @@ export function WordChip({ word }: Props) {
   const colorClasses = UPOS_CLASSES[word.upos] ?? DEFAULT_CLASSES;
   const isPinned = !!pinnedStyle;
   const tooltipStyle = pinnedStyle ?? hoverStyle;
-  const warning = getWarning(word);
+  const warning = getWarning(word, lang);
 
   return (
     <span className="inline-flex flex-col items-center gap-0.5">
