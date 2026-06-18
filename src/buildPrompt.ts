@@ -6,40 +6,33 @@ import type { SentenceChunk, WordAnalysis } from './types';
 
 const TARGET_LANGUAGE = 'HUNGARIAN (magyar)';
 
-const HEADER = `You are an expert Latin philologist. Translate the Latin text below into ${TARGET_LANGUAGE}.
+const HEADER = `You are an expert Latin philologist. Work with the Latin text below and its
+precise, automated per-token analysis (dictionary form, English gloss,
+morphological features, syntactic role). Produce THREE sections, in this order.
 
-The text comes with a precise, automated per-token analysis — dictionary form,
-English gloss, morphological features, and syntactic role — that was carefully
-produced and cross-checked. TREAT THIS ANALYSIS AS GROUND TRUTH and translate
-strictly in accordance with it.
+SECTION 1 — Faithful rendering (strictly per the analysis)
+Translate the whole text into ${TARGET_LANGUAGE}, rendering every word exactly as its
+given part of speech, case, number, gender, tense, mood, voice and gloss dictate
+— even if the result is awkward or barely makes sense. Use ONLY the provided
+analysis here; do not apply your own knowledge of Latin to "fix" anything, and
+stay within the senses listed in each gloss. Preserve the line structure exactly;
+blank lines mark stanza/section breaks. This section validates the analysis
+against the source.
 
-Hard rules:
-1. Accuracy over fluency. Render the Latin as precisely as Hungarian grammar
-   allows. Do not paraphrase loosely, do not embellish, do not add or drop
-   content.
-2. Never contradict the analysis. Your rendering of each word must agree with its
-   given morphology (case, number, gender, tense, mood, voice) and syntactic
-   role. The provided features OVERRIDE your own reading of the Latin: if you
-   would have parsed the word differently (a different tense, case, person…),
-   the provided features win — they were verified. Translate according to them,
-   not according to what you assume the Latin form "should" be.
-3. Use the English glosses as the authoritative meaning of each word. If a gloss
-   lists several senses, choose the one that fits the syntax and context — but
-   stay within the listed senses.
-4. Do NOT hallucinate. If you are tempted to pick a reading not supported by the
-   analysis, do not — flag it instead.
-5. Tokens marked "(uncertain — surface form only)" or "(no gloss)" have no
-   reliable dictionary data; infer them only from the immediate context and
-   flag them explicitly.
-6. Preserve the line structure exactly, line by line. Blank lines mark
-   stanza/section breaks — keep them. Punctuation is shown in each source line
-   (the "L… |" lines); reproduce it sensibly.
+SECTION 2 — Analysis observations
+List every token whose given analysis looks wrong, internally inconsistent, or
+yields something ungrammatical or nonsensical in context. For each give: the
+form, its given analysis, and what the Latin actually requires (correct
+case / part of speech / sense), with one line of reasoning. If nothing is wrong,
+write "none".
 
-Output:
-A) The Hungarian translation, aligned line-by-line to the source (one source
-   line -> one output line).
-B) A short "Notes" section listing every word where you disambiguated between
-   senses, or where the analysis was uncertain/missing, with brief reasoning.`;
+SECTION 3 — Corrected translation (the usable one)
+Re-translate into natural, accurate ${TARGET_LANGUAGE}. Override ONLY the tokens you
+listed in Section 2, using their corrected reading; keep every other word exactly
+as in Section 1. Stay faithful and literal — do not paraphrase loosely, embellish,
+or add/drop content. Preserve the line structure. This is the final translation.
+
+Punctuation is shown in each source line (the "L… |" lines); reproduce it sensibly.`;
 
 function features(word: WordAnalysis): string {
   const m = word.morphology ?? {};
