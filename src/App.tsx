@@ -4,6 +4,7 @@ import { ControlPanel } from './components/ControlPanel';
 import { ResultsView } from './components/ResultsView';
 import { DebugContext } from './DebugContext';
 import { LangContext } from './LangContext';
+import { buildTranslationPrompt } from './buildPrompt';
 
 const RECENT_KEY = 'latin_recent_files';
 const MAX_RECENT = 5;
@@ -34,8 +35,10 @@ export default function App() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [panelOpen, setPanelOpen] = useState(true);
   const [currentFileName, setCurrentFileName] = useState('');
+  const [currentContent, setCurrentContent] = useState('');
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>(() => loadRecentFiles());
   const [debugMode, setDebugMode] = useState(false);
+  const [promptState, setPromptState] = useState<'idle' | 'working' | 'done' | 'error'>('idle');
 
   // Close panel on narrow screens once analysis starts
   useEffect(() => {
@@ -66,6 +69,7 @@ export default function App() {
       setSentences([]);
       setIsStreaming(true);
       setCurrentFileName(fileName);
+      setCurrentContent(text);
 
       const backendUrl = (import.meta.env.VITE_BACKEND_URL as string | undefined) ?? 'http://localhost:8000';
 
@@ -130,6 +134,36 @@ export default function App() {
     [lang, mode]
   );
 
+  // Build an AI translation prompt from a fresh English-language analysis (the
+  // morphology terms must be English for the prompt regardless of the UI lang),
+  // then copy it to the clipboard.
+  const copyPrompt = useCallback(async () => {
+    if (!currentContent.trim()) return;
+    setPromptState('working');
+    try {
+      const backendUrl = (import.meta.env.VITE_BACKEND_URL as string | undefined) ?? 'http://localhost:8000';
+      const res = await fetch(`${backendUrl}/analyze/stream?lang=en&mode=${mode}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        body: currentContent,
+      });
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      const raw = await res.text();
+      const chunks = raw
+        .trim()
+        .split('\n')
+        .filter(Boolean)
+        .map(l => JSON.parse(l) as StreamChunk)
+        .filter((c): c is SentenceChunk => 'lines' in c);
+      await navigator.clipboard.writeText(buildTranslationPrompt(chunks));
+      setPromptState('done');
+    } catch (err) {
+      console.error('Prompt copy failed:', err);
+      setPromptState('error');
+    }
+    setTimeout(() => setPromptState('idle'), 2500);
+  }, [currentContent, mode]);
+
   function handleFile(name: string, content: string) {
     const entry: RecentFile = { name, content, timestamp: Date.now() };
     setRecentFiles(prev => saveRecentFile(entry, prev));
@@ -187,6 +221,31 @@ export default function App() {
                   ? `${sentences.length} sentence${sentences.length !== 1 ? 's' : ''}`
                   : 'No results yet'}
               </span>
+
+              {!isStreaming && sentences.length > 0 && (
+                <button
+                  onClick={copyPrompt}
+                  disabled={promptState === 'working'}
+                  title="Copy a ready-to-paste AI prompt that translates this text to Hungarian using the exact analysis"
+                  className={[
+                    'ml-4 text-xs px-2 py-1 rounded border transition-colors',
+                    promptState === 'done'
+                      ? 'border-green-300 bg-green-50 text-green-700'
+                      : promptState === 'error'
+                      ? 'border-red-300 bg-red-50 text-red-700'
+                      : 'border-gray-300 text-gray-600 hover:bg-gray-100',
+                  ].join(' ')}
+                >
+                  {promptState === 'working'
+                    ? 'Building…'
+                    : promptState === 'done'
+                    ? '✓ Copied!'
+                    : promptState === 'error'
+                    ? 'Failed'
+                    : 'Copy AI prompt'}
+                </button>
+              )}
+
               <span className="ml-auto text-xs text-gray-300 flex items-center gap-2">
                 <span>powered by</span>
                 <a href="https://lindat.mff.cuni.cz/services/udpipe/info.php" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition-colors" title="Institute of Formal and Applied Linguistics, Faculty of Mathematics and Physics, Charles University, Czech Republic">UDPipe</a>
